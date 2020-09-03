@@ -11,8 +11,18 @@ export class ProductsController {
       return this.productsService.create(createProductDto);
     }
   
+    @Get('/:id')
+    findProductById(@Param('id') id: string): Product {
+      return this.productsService.findProductById(id);
+    }
+
     @Get()
     findAll(@Query() query: ListAllEntities): Product[] {
       return this.productsService.findAll(query);
+    }
+
+    @Delete('/:id')
+    deleteProductById(@Param('id') id: string): void {
+       this.productsService.deleteProductById(id);
     }
 }
