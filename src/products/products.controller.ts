@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Query, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Param, Put, Delete, Patch } from '@nestjs/common';
 import {  ListAllEntities, Product } from './products.model';
 import { ProductsService } from './products.service';
-import { CreateProductDto } from './dto/products.dto';
+import { CreateProductDto, UpdateProductDTO } from './dto/products.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -19,6 +19,11 @@ export class ProductsController {
     @Get()
     findAll(@Query() query: ListAllEntities): Product[] {
       return this.productsService.findAll(query);
+    }
+
+    @Patch('/:id/:label')
+    updateProductById(@Param('id') id: string,@Param('label') label: string, @Body() updateProductDTO: UpdateProductDTO ): Product {
+       return this.productsService.updateProductById(id, label, updateProductDTO);
     }
 
     @Delete('/:id')

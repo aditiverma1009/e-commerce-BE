@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Product, ListAllEntities } from './products.model';
-import { CreateProductDto } from './dto/products.dto';
+import { CreateProductDto, UpdateProductDTO } from './dto/products.dto';
 import {v1 as uuidv1} from 'uuid';
 
 @Injectable()
@@ -24,6 +24,16 @@ export class ProductsService {
 
   findAll(query: ListAllEntities): Product[] {
     return this.products.slice(0, query.limit);
+  }
+
+  updateProductById(id: string, label: string, updateProductDTO:UpdateProductDTO): Product {
+    this.products = this.products.map((eachProduct)=>{
+      if(eachProduct.id===id) {
+        eachProduct[label] = updateProductDTO[label]
+        return eachProduct
+      }
+    })
+    return this.findProductById(id);
   }
 
   deleteProductById(id: string): void {

@@ -3,3 +3,7 @@ export class CreateProductDto {
     category: string;
 }
   
+export class UpdateProductDTO {
+    name?: string;
+    category?: string
+}
