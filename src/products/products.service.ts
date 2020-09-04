@@ -19,10 +19,10 @@ export class ProductsService {
   }
 
   findProductById(id: string): Product {
-    const found =  this.products.find(eachProduct => eachProduct.id === id);
-    if(!found) {
-      throw new NotFoundException;
-    } 
+    const found = this.products.find(eachProduct => eachProduct.id === id);
+    if (!found) {
+      throw new NotFoundException();
+    }
     return found;
   }
 
@@ -60,6 +60,7 @@ export class ProductsService {
   }
 
   deleteProductById(id: string): void {
+    const found = this.findProductById(id);
     this.products = this.products.filter(eachProduct => eachProduct.id !== id);
   }
 }
