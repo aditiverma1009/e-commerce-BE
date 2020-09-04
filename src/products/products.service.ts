@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product, ListAllEntities } from './products.model';
 import { CreateProductDto, UpdateProductDTO } from './dto/products.dto';
 import { v1 as uuidv1 } from 'uuid';
@@ -19,7 +19,11 @@ export class ProductsService {
   }
 
   findProductById(id: string): Product {
-    return this.products.find(eachProduct => eachProduct.id === id);
+    const found =  this.products.find(eachProduct => eachProduct.id === id);
+    if(!found) {
+      throw new NotFoundException;
+    } 
+    return found;
   }
 
   findAll(query: ListAllEntities): Product[] {
