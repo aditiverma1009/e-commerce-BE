@@ -27,8 +27,15 @@ export class ProductsController {
   }
 
   @Get()
-  findAll(@Query() query: ListAllEntities): Product[] {
-    return this.productsService.findAll(query);
+  findAll(
+    @Query() query: ListAllEntities,
+  ): Product[] {
+      const {limit, category, search}= query;
+    if (category.length|| search.length) {
+      return this.productsService.findAllByFilter(limit, category, search);
+    } else {
+      return this.productsService.findAll(query);
+    }
   }
 
   @Patch('/:id/:label')

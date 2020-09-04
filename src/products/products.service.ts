@@ -26,6 +26,20 @@ export class ProductsService {
     return this.products.slice(0, query.limit);
   }
 
+  findAllByFilter(limit: number, category:string, search:string): Product[] {
+    let filteredData = this.products;
+    if(category) {
+      filteredData= filteredData.filter((eachProduct)=> eachProduct.category===category)
+    }
+    if(search) {
+      filteredData= filteredData.filter((eachProduct)=> {
+        return (eachProduct.category.includes(search) ||
+        eachProduct.name.includes(search))
+      })
+    }
+    return filteredData.slice(0, limit);
+  }
+
   updateProductById(
     id: string,
     label: string,
