@@ -31,7 +31,7 @@ export class ProductsController {
   }
 
   @Get()
-  findTasks(@Query() query: ListAllEntities): Product[] {
+  findTasks(@Query(ValidationPipe) query: ListAllEntities): Product[] {
     const { limit, category, search } = query;
     if (category.length || search.length) {
       return this.productsService.findAllByFilter(limit, category, search);
