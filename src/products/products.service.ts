@@ -50,12 +50,14 @@ export class ProductsService {
 
   updateProductById(
     id: string,
-    label: string,
     updateProductDTO: UpdateProductDTO,
   ): Product {
     // product hold the ref to the product, hence directly gets updated
+    const keyToBeUpdated = Object.keys(updateProductDTO)
     const product = this.findProductById(id);
-    product[label] = updateProductDTO[label];
+    keyToBeUpdated.forEach((eachKey)=>{
+      product[eachKey] = updateProductDTO[eachKey];
+    })
     return product;
   }
 

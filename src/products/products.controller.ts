@@ -14,6 +14,7 @@ import {
 import { ListAllEntities, Product } from './products.model';
 import { ProductsService } from './products.service';
 import { CreateProductDto, UpdateProductDTO } from './dto/products.dto';
+import { ProductCategoryValidation } from './dto/product-category-validation.pipe';
 
 @Controller('products')
 export class ProductsController {
@@ -39,13 +40,13 @@ export class ProductsController {
     }
   }
 
-  @Patch('/:id/:label')
+  // add validation for label, check that the category can be certain options
+  @Patch('/:id')
   updateProductById(
     @Param('id') id: string,
-    @Param('label') label: string,
-    @Body() updateProductDTO: UpdateProductDTO,
+    @Body(ProductCategoryValidation) updateProductDTO: UpdateProductDTO,
   ): Product {
-    return this.productsService.updateProductById(id, label, updateProductDTO);
+    return this.productsService.updateProductById(id, updateProductDTO);
   }
 
   @Delete('/:id')
