@@ -1,7 +1,8 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { ProductCategories } from "./product-category.enum";
 
 @Entity()
-export class Products extends BaseEntity {
+export class Product extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -9,5 +10,5 @@ export class Products extends BaseEntity {
     name: string;
 
     @Column()
-    category: string;
+    category: ProductCategories;
 }

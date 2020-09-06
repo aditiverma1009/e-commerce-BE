@@ -1,7 +1,7 @@
 import { PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { ProductCategories } from '../product-category.enum';
 
 export class ProductCategoryValidation implements PipeTransform {
-  readonly allowedCategories = ['Clothing', 'Footwear', 'Accessories'];
 
   transform(value: any, metadata: ArgumentMetadata) {
     // console.log('metadata', metadata)
@@ -15,7 +15,7 @@ export class ProductCategoryValidation implements PipeTransform {
   }
 
   private isCategoryValid(status: any): boolean {
-    if (this.allowedCategories.includes(status)) return true;
+    if (Object.values(ProductCategories).includes(status)) return true;
     else return false;
   }
 }

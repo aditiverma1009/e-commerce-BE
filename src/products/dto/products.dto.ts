@@ -1,14 +1,26 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsNumberString, IsIn } from "class-validator";
+import { ProductCategories } from "../product-category.enum";
+
+export class CategoryDTO {
+    @IsIn([...Object.values(ProductCategories), '']) 
+    category?: ProductCategories
+}
 
 export class CreateProductDto {
     @IsNotEmpty()
     name: string;
 
-    @IsNotEmpty()
-    category: string;
+    @IsIn([...Object.values(ProductCategories), '']) 
+    category: ProductCategories;
 }
   
-export class UpdateProductDTO {
+export class UpdateProductDTO  extends CategoryDTO{
     name?: string;
-    category?: string
+}
+
+export class GetProductsFilterDTO extends CategoryDTO {
+    @IsNumberString()
+    limit: number;
+  
+    search: string;
 }

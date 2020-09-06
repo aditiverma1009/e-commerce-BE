@@ -1,68 +1,71 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Product, ListAllEntities } from './products.model';
-import { CreateProductDto, UpdateProductDTO } from './dto/products.dto';
-import { v1 as uuidv1 } from 'uuid';
+import {
+  CreateProductDto,
+  UpdateProductDTO,
+  GetProductsFilterDTO,
+} from './dto/products.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ProductsRepository } from './products.repository';
+import { Product } from './products.entity';
 
 @Injectable()
 export class ProductsService {
-  private products: Product[] = [];
+  constructor(
+    @InjectRepository(ProductsRepository)
+    private productsRepository: ProductsRepository,
+  ) {}
 
-  create(createProductDto: CreateProductDto): Product {
-    const { name, category } = createProductDto;
-    const product = {
-      id: uuidv1(),
-      name,
-      category,
-    };
-    this.products.push(product);
-    return product;
+  async create(createProductDto: CreateProductDto): Promise<Product> {
+    return this.productsRepository.createProduct(createProductDto);
   }
 
-  findProductById(id: string): Product {
-    const found = this.products.find(eachProduct => eachProduct.id === id);
+  async findProductById(id: number): Promise<Product> {
+    const found = await this.productsRepository.findOne(id);
     if (!found) {
       throw new NotFoundException();
     }
     return found;
   }
 
-  findAll(query: ListAllEntities): Product[] {
-    return this.products.slice(0, query.limit);
+  async getProductsByFilter(filterDTO: GetProductsFilterDTO): Promise<Product[]> {
+    return this.productsRepository.getProducts(filterDTO)
   }
 
-  findAllByFilter(limit: number, category: string, search: string): Product[] {
-    let filteredData = this.products;
-    if (category) {
-      filteredData = filteredData.filter(
-        eachProduct => eachProduct.category === category,
-      );
-    }
-    if (search) {
-      filteredData = filteredData.filter(eachProduct => {
-        return (
-          eachProduct.category.includes(search) ||
-          eachProduct.name.includes(search)
-        );
-      });
-    }
-    return filteredData.slice(0, limit);
-  }
+  // findAllByFilter(limit: number, category: string, search: string): Product[] {
+  //   let filteredData = this.products;
+  //   if (category) {
+  //     filteredData = filteredData.filter(
+  //       eachProduct => eachProduct.category === category,
+  //     );
+  //   }
+  //   if (search) {
+  //     filteredData = filteredData.filter(eachProduct => {
+  //       return (
+  //         eachProduct.category.includes(search) ||
+  //         eachProduct.name.includes(search)
+  //       );
+  //     });
+  //   }
+  //   return filteredData.slice(0, limit);
+  // }
 
-  updateProductById(
-    id: string,
+  async updateProductById(
+    id: number,
     updateProductDTO: UpdateProductDTO,
-  ): Product {
-    // product hold the ref to the product, hence directly gets updated
-    const keyToBeUpdated = Object.keys(updateProductDTO)
-    const product = this.findProductById(id);
-    keyToBeUpdated.forEach((eachKey)=>{
+  ): Promise<Product> {
+    const product = await this.findProductById(id);
+    const keyToBeUpdated = Object.keys(updateProductDTO);
+    keyToBeUpdated.forEach(eachKey => {
       product[eachKey] = updateProductDTO[eachKey];
-    })
+    });
+    await product.save();
     return product;
   }
 
-  deleteProductById(id: string): void {
-    const found = this.findProductById(id);
-    this.products = this.products.filter(eachProduct => eachProduct.id !== id);
+  async deleteProductById(id: number): Promise<void> {
+    const rows = await this.productsRepository.delete({ id: id });
+    if (rows.affected === 0) {
+      throw new NotFoundException(`Product ${id} not found`);
+    }
   }
 }
